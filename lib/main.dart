@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import 'package:popquiz/src/todo_page.dart';
+import 'package:todo_list/src/todo_page.dart';
 
 void main() {
   runApp(
@@ -27,7 +26,7 @@ class _HomeState extends State<Home> {
         backgroundColor: Colors.red,
         centerTitle: true,
       ),
-      body: const Quiz(),
+      body: const ToDo(),
     );
   }
 }

@@ -6,14 +6,14 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 
-class Quiz extends StatefulWidget {
-  const Quiz({Key? key}) : super(key: key);
+class ToDo extends StatefulWidget {
+  const ToDo({Key? key}) : super(key: key);
 
   @override
-  _QuizState createState() => _QuizState();
+  _ToDoState createState() => _ToDoState();
 }
 
-class _QuizState extends State<Quiz> {
+class _ToDoState extends State<ToDo> {
   final _toDoController = TextEditingController();
   List _toDoList = [];
   late Map<String, dynamic> _lastRemoved;
