@@ -1,23 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:todo_list/src/todo_page.dart';
+import 'package:todo_list/page/todo_page.dart';
 
 void main() {
   runApp(
     const MaterialApp(
-      home: Home(),
+      home: MyApp(),
       debugShowCheckedModeBanner: false,
     ),
   );
 }
 
-class Home extends StatefulWidget {
-  const Home({Key? key}) : super(key: key);
+class MyApp extends StatefulWidget {
+  const MyApp({Key? key}) : super(key: key);
 
   @override
-  _HomeState createState() => _HomeState();
+  _MyAppState createState() => _MyAppState();
 }
 
-class _HomeState extends State<Home> {
+class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

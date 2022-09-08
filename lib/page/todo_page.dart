@@ -1,8 +1,8 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
+
+import 'package:todo_list/controller/todo_controller.dart';
 
 class ToDo extends StatefulWidget {
   const ToDo({Key? key}) : super(key: key);
@@ -12,18 +12,14 @@ class ToDo extends StatefulWidget {
 }
 
 class _ToDoState extends State<ToDo> {
-  final _toDoController = TextEditingController();
-  List _toDoList = [];
-  late Map<String, dynamic> _lastRemoved;
-  late int __lastRemovedPos;
-
+  final ToDoController _controller = ToDoController();
   @override
   void initState() {
     super.initState();
 
-    _readData().then((data) {
+    _controller.readData().then((data) {
       setState(() {
-        _toDoList = json.decode(data!);
+        _controller.toDoList = json.decode(data!);
       });
     });
   }
@@ -31,11 +27,11 @@ class _ToDoState extends State<ToDo> {
   void _addToDo() {
     setState(() {
       Map<String, dynamic> newToDo = {};
-      newToDo["title"] = _toDoController.text;
-      _toDoController.text = "";
+      newToDo["title"] = _controller.toDoController.text;
+      _controller.toDoController.text = "";
       newToDo["ok"] = false;
-      _toDoList.add(newToDo);
-      _saveData();
+      _controller.toDoList.add(newToDo);
+      _controller.saveData();
     });
   }
 
@@ -49,7 +45,7 @@ class _ToDoState extends State<ToDo> {
             children: [
               Expanded(
                 child: TextField(
-                  controller: _toDoController,
+                  controller: _controller.toDoController,
                   decoration: const InputDecoration(
                     labelText: "Tarefa",
                     labelStyle: TextStyle(color: Colors.black87),
@@ -74,7 +70,7 @@ class _ToDoState extends State<ToDo> {
         Expanded(
           child: ListView.builder(
               padding: const EdgeInsets.only(top: 10.0),
-              itemCount: _toDoList.length,
+              itemCount: _controller.toDoList.length,
               itemBuilder: buildItem),
         )
       ],
@@ -85,7 +81,7 @@ class _ToDoState extends State<ToDo> {
     return Dismissible(
       key: Key(DateTime.now().millisecondsSinceEpoch.toString()),
       background: Container(
-        color: Colors.amber,
+        color: Colors.red,
         child: const Align(
           alignment: Alignment(-0.9, 0.0),
           child: Icon(
@@ -97,36 +93,39 @@ class _ToDoState extends State<ToDo> {
       direction: DismissDirection.startToEnd,
       child: CheckboxListTile(
         title: Text(
-          _toDoList[index]["title"],
+          _controller.toDoList[index]["title"],
         ),
-        value: _toDoList[index]["ok"],
+        value: _controller.toDoList[index]["ok"],
         secondary: CircleAvatar(
-          child: Icon(_toDoList[index]["ok"] ? Icons.check : Icons.error),
+          child: Icon(
+              _controller.toDoList[index]["ok"] ? Icons.check : Icons.error),
         ),
         onChanged: (c) {
           setState(() {
-            _toDoList[index]["ok"] = c;
-            _saveData();
+            _controller.toDoList[index]["ok"] = c;
+            _controller.saveData();
           });
         },
       ),
       onDismissed: (direction) {
         setState(
           () {
-            _lastRemoved = Map.from(_toDoList[index]);
-            __lastRemovedPos = index;
-            _toDoList.removeAt(index);
+            _controller.lastRemoved = Map.from(_controller.toDoList[index]);
+            _controller.lastRemovedPos = index;
+            _controller.toDoList.removeAt(index);
 
-            _saveData();
+            _controller.saveData();
 
             final snack = SnackBar(
-              content: Text('Informação ${_lastRemoved["title"]} removida'),
+              content: Text(
+                  'Informação ${_controller.lastRemoved["title"]} removida'),
               action: SnackBarAction(
                 label: "Desfazer",
                 onPressed: () {
                   setState(() {
-                    _toDoList.insert(__lastRemovedPos, _lastRemoved);
-                    _saveData();
+                    _controller.toDoList.insert(
+                        _controller.lastRemovedPos, _controller.lastRemoved);
+                    _controller.saveData();
                   });
                 },
               ),
@@ -137,25 +136,5 @@ class _ToDoState extends State<ToDo> {
         );
       },
     );
-  }
-
-  Future<File> _getFile() async {
-    final directory = await getApplicationDocumentsDirectory();
-    return File("${directory.path}/data.json");
-  }
-
-  Future<File> _saveData() async {
-    String data = json.encode(_toDoList);
-    final file = await _getFile();
-    return file.writeAsString(data);
-  }
-
-  Future<String?> _readData() async {
-    try {
-      final file = await _getFile();
-      return file.readAsString();
-    } catch (e) {
-      return null;
-    }
   }
 }
