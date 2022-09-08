@@ -1,5 +1,3 @@
-// ignore_for_file: deprecated_member_use
-
 import 'dart:convert';
 import 'dart:io';
 
@@ -58,10 +56,16 @@ class _ToDoState extends State<ToDo> {
                   ),
                 ),
               ),
-              RaisedButton(
-                color: Colors.red,
-                child: const Text('Acrescentar'),
-                textColor: Colors.white,
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  primary: Colors.red,
+                ),
+                child: const Text(
+                  'Acrescentar',
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
+                ),
                 onPressed: _addToDo,
               ),
             ],
@@ -128,7 +132,7 @@ class _ToDoState extends State<ToDo> {
               ),
               duration: const Duration(seconds: 3),
             );
-            Scaffold.of(context).showSnackBar(snack);
+            ScaffoldMessenger.of(context).showSnackBar(snack);
           },
         );
       },
